@@ -13,6 +13,7 @@ export default class JsonAdapter {
   private readonly schema: object | object[];
   private readonly ops = {
     $value: true,
+    $default: true,
     $var: true,
     $lookup: true,
     $transform: true,
@@ -236,6 +237,13 @@ export default class JsonAdapter {
           src,
           target,
           this.lookupValue.bind(this, formula[op]),
+        );
+        return;
+      }
+      if (op === '$default') {
+        log({ key, formula, src, target });
+        this.mapField(key, key, src, target, (val) =>
+          val === undefined ? formula[op] : val,
         );
         return;
       }
