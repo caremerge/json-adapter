@@ -105,7 +105,7 @@ export default class JsonAdapter {
 
   private getOperator(formula: string | object): string {
     if (_.isString(formula)) {
-      return formula;
+      return formula as string;
     }
     const foundOps = _.filter(_.keys(formula), (key) => this.isOperator(key));
     if (foundOps.length === 0) {
@@ -194,13 +194,13 @@ export default class JsonAdapter {
     }
     if (_.isString(formula)) {
       log({ key, formula, src, target });
-      return this.mapField(key, formula, src, target);
+      return this.mapField(key, formula as string, src, target);
     }
     if (_.isPlainObject(formula)) {
       if (!this.isPipelineObj(formula)) {
         log({ key, formula, src, target }, 'non-pipeline sub-object');
         const subAdapter = new JsonAdapter(
-          formula,
+          formula as any,
           this.transformers,
           this.filters,
           this.dictionaries,
@@ -354,7 +354,7 @@ export default class JsonAdapter {
     if (_.isArray(formula) && this.isPipeline(formula)) {
       log({}, 'inside array formula!');
       let currentSrc = this.getReadonlyCopy(src);
-      for (const pipeline of formula) {
+      for (const pipeline of formula as any) {
         const currentTarget = this.getSafeTarget();
         this.mapKey(key, pipeline, currentSrc, currentTarget);
         currentSrc = currentTarget;
@@ -430,7 +430,7 @@ export default class JsonAdapter {
       log({}, 'inside array schema!');
       let currSrc = this.getReadonlyCopy(_src);
       let currTarget = this.getSafeTarget();
-      for (const subSchema of this.schema) {
+      for (const subSchema of this.schema as any) {
         const _subSchema = this.getSafeSchema(subSchema);
         const subAdapter = new JsonAdapter(
           _subSchema,
