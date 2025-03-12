@@ -1,6 +1,6 @@
 {
   "name": "node-json-adapter",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "map, transform, filter, and validate json and javascript objects",
   "main": "./dist/index.js",
   "scripts": {
