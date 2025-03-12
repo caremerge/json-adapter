@@ -38,6 +38,16 @@ describe('JsonAdapter - lookupValue', () => {
     expect(result).toBe('value1');
   });
 
+  it('should undefined if value is undefined', () => {
+    const result = adapter.lookupValue('sampleDict', undefined);
+    expect(result).toBe(undefined);
+  });
+
+  it('should null if value is null', () => {
+    const result = adapter.lookupValue('sampleDict', null);
+    expect(result).toBe(null);
+  });
+
   it('should return the default value if no match is found', () => {
     const result = adapter.lookupValue('sampleDict', 'unknownKey');
     expect(result).toBe('defaultValue');
@@ -201,6 +211,44 @@ describe('baseline tests', () => {
     const result = adapter.mapTransform({});
 
     expect(result).toEqual({ status: 'active' });
+  });
+
+  it('should not apply default using $default operator when value exists', () => {
+    const schema = { status: [{ $value: 'active' }, { $default: 'inactive' }] };
+    const adapter = new JsonAdapter(schema);
+
+    const result = adapter.mapTransform({});
+
+    expect(result).toEqual({ status: 'active' });
+  });
+
+  it('should apply default using $default operator when value is undefined', () => {
+    const schema = {
+      status: [{ $value: undefined }, { $default: 'inactive' }],
+    };
+    const adapter = new JsonAdapter(schema);
+
+    const result = adapter.mapTransform({});
+
+    expect(result).toEqual({ status: 'inactive' });
+  });
+
+  it('should apply default using $default operator when value is undefined (col case)', () => {
+    const schema = { status: ['status', { $default: 'inactive' }] };
+    const adapter = new JsonAdapter(schema);
+
+    const result = adapter.mapTransform({});
+
+    expect(result).toEqual({ status: 'inactive' });
+  });
+
+  it('should not apply default using $default operator when value is null (col case)', () => {
+    const schema = { status: ['status', { $default: 'inactive' }] };
+    const adapter = new JsonAdapter(schema);
+
+    const result = adapter.mapTransform({ status: null });
+
+    expect(result).toEqual({ status: null });
   });
 
   it('should replace values using $var operator', () => {
