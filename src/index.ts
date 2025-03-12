@@ -135,6 +135,9 @@ export default class JsonAdapter {
   }
 
   public lookupValue(dictionary: string, value: string) {
+    if (value === undefined || value === null) {
+      return value;
+    }
     const dict = this.getDict(dictionary);
     let defaultValue = undefined;
     for (const [key, mappedValue] of dict) {
